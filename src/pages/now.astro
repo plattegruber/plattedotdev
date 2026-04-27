@@ -1,0 +1,47 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<Layout title="Now — platte.dev">
+  <Breadcrumbs parts={[{ label: '~', href: '/' }, { label: 'now' }]} />
+  <div class="mx-auto mt-[18px] max-w-[var(--max-page)] px-6">
+    <h1 class="my-[18px] mb-1.5 font-serif text-[48px] font-normal tracking-[-0.02em]">Now</h1>
+    <p class="m-0 mb-8 font-mono text-[13px] text-fg-3">
+      Last updated: April 22, 2026 · <a href="https://nownownow.com" class="text-fg-3">what is this?</a>
+    </p>
+
+    <div class="prose">
+      <p class="lede">
+        What I'm working on, reading, and stuck on, this month.
+      </p>
+
+      <h3 class="mt-8 font-serif text-[24px] font-normal">Working on</h3>
+      <ul>
+        <li>A long post on reviewing AI-authored migrations. Two drafts in, still too academic.</li>
+        <li>Migrating a service from a homegrown queue to NATS. Halfway. Mostly happy.</li>
+        <li>Reading the Postgres source, slowly, for a talk in June.</li>
+      </ul>
+
+      <h3 class="mt-8 font-serif text-[24px] font-normal">Reading</h3>
+      <ul>
+        <li><em>Designing Data-Intensive Applications</em> — for the third time, still finding new things.</li>
+        <li><em>The Soul of a New Machine</em> — a re-read; holds up.</li>
+        <li>The Carmack Lex Fridman transcripts. Skim them.</li>
+      </ul>
+
+      <h3 class="mt-8 font-serif text-[24px] font-normal">Stuck on</h3>
+      <ul>
+        <li>How to write a good prompt for code review without it becoming a 200-line spec.</li>
+        <li>Whether to keep using <code>gofmt</code>'s defaults or finally tune them. (Yes, this is what passes for stuck.)</li>
+      </ul>
+
+      <hr />
+      <p class="text-[14px] text-fg-3">
+        This page is a <a href="https://nownownow.com">Now page</a> — not a status feed,
+        not a journal, just where I am this month. I update it when it
+        stops being true.
+      </p>
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,22 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const path = Astro.url.pathname.replace(/^\/+/, '') || 'unknown';
+---
+
+<Layout title="Not found — platte.dev">
+  <div class="mx-auto max-w-[var(--max-page)] px-6 py-20">
+    <div class="rounded-[var(--radius-3)] border border-border-1 bg-bg-2 px-5.5 py-5 font-mono text-[14px] text-fg-2">
+      <div class="text-fg-3">$ cat {path}.md</div>
+      <div class="mt-1.5 text-danger">cat: {path}.md: No such file or directory</div>
+      <div class="mt-[18px] text-fg-3">$ cd ~</div>
+    </div>
+    <div class="mt-7 font-serif text-[38px] leading-[1.1] tracking-[-0.02em] text-fg-1">
+      That page isn't here.
+    </div>
+    <p class="mt-3.5 leading-[1.6] text-fg-2" style="max-width: 52ch;">
+      Either I moved it, or you typed it from memory. Try the
+      <a href="/">home page</a> or the <a href="/writing">archive</a>.
+    </p>
+  </div>
+</Layout>

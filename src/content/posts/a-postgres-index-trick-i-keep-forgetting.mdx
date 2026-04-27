@@ -1,0 +1,50 @@
+---
+title: "A Postgres index trick I keep forgetting"
+blurb: "Every six months I rediscover the same BTREE quirk. This time I'm putting it on the internet so my notebook can stop."
+date: 2026-04-08
+readMin: 7
+tag: "‡ tutorial"
+---
+
+import CodeBlock from '../../components/CodeBlock.astro';
+import Footnote from '../../components/Footnote.svelte';
+import FootnoteList from '../../components/FootnoteList.svelte';
+
+<p class="lede">
+  Every six months I rediscover the same BTREE quirk and write it
+  in a notebook. This time I'm putting it on the internet so the
+  notebook can stop.
+</p>
+
+You have a <code>users</code> table. The <code>email</code>
+column is a string. People sign up with mixed casing. You query
+like this:
+
+<CodeBlock name="slow.sql" lang="sql" code={`SELECT id, email
+FROM users
+WHERE lower(email) = 'alex@platte.dev'
+LIMIT 1;`} />
+
+Postgres scans every row. The index on <code>email</code> doesn't
+help, because the planner sees <code>lower(email)</code> on the
+left side and gives up. The fix is a functional index that matches
+the predicate *exactly*:
+
+<CodeBlock name="fix.sql" lang="sql" code={`-- run against production; CONCURRENTLY = no exclusive lock
+CREATE INDEX CONCURRENTLY users_email_lower
+  ON users (lower(email));
+
+-- now the same query is an index scan
+EXPLAIN ANALYZE
+SELECT id FROM users WHERE lower(email) = 'alex@platte.dev';`} />
+
+> The index expression must *match* the query expression —
+> character for character — or the planner won't use it.
+
+That's the whole post. Six months from now I'll forget this again
+and rediscover it. Maybe by then I'll have learned to read my own
+notebook.<Footnote n={1} />
+
+---
+
+<FootnoteList items={["Probably not."]} />

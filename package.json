@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "plattedotdev",
   "type": "module",
   "version": "0.0.1",
   "engines": {
@@ -12,6 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.1.9"
+    "@astrojs/cloudflare": "^13.2.1",
+    "@astrojs/mdx": "^5.0.4",
+    "@astrojs/svelte": "^8.0.5",
+    "@tailwindcss/vite": "^4.2.4",
+    "astro": "^6.1.9",
+    "svelte": "^5.55.5",
+    "tailwindcss": "^4.2.4"
   }
 }

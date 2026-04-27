@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+---
+
+<Layout title="About — platte.dev">
+  <Breadcrumbs parts={[{ label: '~', href: '/' }, { label: 'about' }]} />
+  <div class="mx-auto mt-[18px] max-w-[var(--max-page)] px-6">
+    <h1 class="my-[18px] mb-3.5 font-serif text-[48px] font-normal tracking-[-0.02em]">About</h1>
+
+    <div class="prose">
+      <p class="lede">
+        I'm a software engineer based in Berlin. I work mostly on backend
+        systems — Postgres, Go, a sprinkling of Rust — and tinker with
+        frontend on weekends.
+      </p>
+      <p>
+        This blog has one editorial rule: <strong>I use AI to write the
+        code, never the prose.</strong> Every word here is mine, typed
+        in a plain editor, often badly the first time. The code samples,
+        on the other hand, are usually drafted with help from a model and
+        then rewritten until I understand every line.
+      </p>
+      <p>
+        I write for engineers in the middle of their career. That means
+        I'll assume you know what an index is and how a closure works,
+        but I won't assume you've spent six months hunting a memory leak
+        in a Go service or rewriting your test suite for the third time.
+        If a post feels too basic or too dense, that's a miscalibration
+        on my end — let me know.
+      </p>
+      <p>
+        The site is hand-written HTML and a small amount of Svelte. The
+        wordmark cursor is a <code>span</code> with a 1.1s blink.
+        I'm a believer in small, legible source.
+      </p>
+      <p>
+        You can reach me at <a href="mailto:hello@platte.dev">hello@platte.dev</a>
+        or on <a href="https://github.com">github</a>. I read every email; I reply to most.
+      </p>
+
+      <hr />
+
+      <div class="grid grid-cols-[130px_1fr] gap-x-6 gap-y-3.5 font-mono text-[13px] text-fg-2">
+        <div class="text-fg-3">currently</div>
+        <div>Staff engineer at a database company you've heard of</div>
+        <div class="text-fg-3">previously</div>
+        <div>Kong, a fintech that didn't make it, freelance</div>
+        <div class="text-fg-3">writes about</div>
+        <div>AI in real codebases · Postgres · the boring middle of frontend</div>
+        <div class="text-fg-3">does not write about</div>
+        <div>The future of AGI, take-home interview tips, productivity</div>
+        <div class="text-fg-3">uses</div>
+        <div>nvim, tmux, claude, fish, a 2019 thinkpad i refuse to retire</div>
+      </div>
+    </div>
+  </div>
+</Layout>

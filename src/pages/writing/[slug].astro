@@ -1,0 +1,68 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ReadingProgress from '../../components/ReadingProgress.svelte';
+import { getAllPosts, formatIsoDate, formatLongDate } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getAllPosts();
+  return posts.map((p) => ({ params: { slug: p.id }, props: { post: p } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const all = await getAllPosts();
+const idx = all.findIndex((p) => p.id === post.id);
+const newer = idx > 0 ? all[idx - 1] : null;
+const older = idx < all.length - 1 ? all[idx + 1] : null;
+
+const year = post.data.date.getUTCFullYear().toString();
+---
+
+<Layout title={`${post.data.title} — platte.dev`} description={post.data.blurb}>
+  <ReadingProgress client:load />
+  <Breadcrumbs parts={[
+    { label: '~', href: '/' },
+    { label: 'writing', href: '/writing' },
+    { label: year, href: '/writing' },
+    { label: post.id },
+  ]} />
+
+  <article class="mx-auto max-w-[var(--max-page)] px-6 pt-2.5">
+    <div class="mt-6 mb-[18px] flex flex-wrap items-center gap-3 font-mono text-xs text-fg-3">
+      <time datetime={formatIsoDate(post.data.date)}>{formatLongDate(post.data.date)}</time>
+      <span class="text-fg-4">·</span>
+      <span>{post.data.readMin} min read</span>
+      <span class="text-fg-4">·</span>
+      <span class="text-fg-2">{post.data.tag}</span>
+    </div>
+
+    <h1
+      class="m-0 mb-7 font-serif font-normal leading-[1.04] tracking-[-0.025em] text-fg-1"
+      style="font-size: clamp(36px, 5vw, 54px); text-wrap: balance;"
+    >
+      {post.data.title}
+    </h1>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="mt-16 grid grid-cols-2 gap-6 border-t border-border-1 pt-[22px]">
+      {older ? (
+        <a href={`/writing/${older.id}`} class="no-underline text-fg-1">
+          <div class="mb-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-fg-3">← older</div>
+          <div class="font-serif text-[18px] leading-[1.25] text-fg-1">{older.data.title}</div>
+        </a>
+      ) : <span />}
+      {newer ? (
+        <a href={`/writing/${newer.id}`} class="no-underline text-right text-fg-1">
+          <div class="mb-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-fg-3">newer →</div>
+          <div class="font-serif text-[18px] leading-[1.25] text-fg-1">{newer.data.title}</div>
+        </a>
+      ) : <span />}
+    </div>
+  </article>
+</Layout>

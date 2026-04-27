@@ -1,11 +1,91 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
+import TerminalHero from '../components/TerminalHero.svelte';
+import FeaturedCard from '../components/FeaturedCard.svelte';
+import DailyTIL from '../components/DailyTIL.svelte';
+import PostList from '../components/PostList.svelte';
+import { getAllPosts, formatIsoDate, formatTerminalDate, countWords } from '../lib/posts';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const posts = await getAllPosts();
+const featured = posts.find((p) => p.data.featured) ?? posts[0];
+const rest = posts.filter((p) => p.id !== featured.id);
+
+const recentLines = posts
+  .slice(0, 3)
+  .map((p) => `${formatTerminalDate(p.data.date)}  ${p.id}.md`);
+const totalWords = posts.reduce((sum, p) => sum + countWords(p.body), 0);
+
+const listPosts = rest.slice(0, 6).map((p) => ({
+  slug: p.id,
+  title: p.data.title,
+  blurb: p.data.blurb,
+  date: formatIsoDate(p.data.date),
+  readMin: p.data.readMin,
+  tag: p.data.tag,
+}));
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="platte.dev — Alex Platte's notes on AI, code, and the diff between">
+  <div class="relative mx-auto max-w-[var(--max-page)] px-6 pt-14">
+    <div class="mb-[18px] flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.1em] text-fg-3">
+      <span class="inline-block h-px w-3.5 bg-fg-4"></span>
+      platte.dev — notes from the desk
+    </div>
+    <h1
+      class="m-0 font-serif font-normal leading-[0.98] tracking-[-0.025em] text-fg-1"
+      style="font-size: clamp(40px, 6vw, 72px); text-wrap: balance; max-width: 14ch;"
+    >
+      AI writes the code.<br />
+      <em class="text-fg-2">I write the rest.</em>
+    </h1>
+    <p
+      class="mt-[22px] text-[18px] leading-[1.55] text-fg-2"
+      style="max-width: 56ch; text-wrap: pretty;"
+    >
+      I'm Alex. I write here, irregularly, about working with AI in real
+      codebases — what I let it do, what I still do by hand, and how I
+      review the diff before I merge it. Pitched at engineers in the
+      middle of their career: assumes you know your craft, doesn't
+      assume you've solved this particular problem.
+    </p>
+    <div class="mt-[30px] flex items-center gap-4 font-mono text-xs text-fg-3">
+      <a href="/writing" class="text-accent no-underline">read all posts ↗</a>
+      <span class="text-fg-4">·</span>
+      <a href="/now" class="text-fg-3 no-underline">what i'm working on</a>
+    </div>
+  </div>
+
+  <TerminalHero
+    client:load
+    height={280}
+    recentLines={recentLines}
+    totalWords={totalWords}
+    fileCount={posts.length}
+  />
+
+  <div class="mx-auto mt-14 max-w-[var(--max-page)] px-6">
+    <FeaturedCard
+      href={`/writing/${featured.id}`}
+      title={featured.data.title}
+      blurb={featured.data.blurb}
+      date={formatIsoDate(featured.data.date)}
+      readMin={featured.data.readMin}
+      tag={featured.data.tag}
+    />
+  </div>
+
+  <div class="mx-auto mt-6 max-w-[var(--max-page)] px-6">
+    <DailyTIL client:load />
+  </div>
+
+  <div class="mx-auto mt-14 max-w-[var(--max-page)] px-6">
+    <div class="flex justify-between border-b border-border-1 pb-3.5 font-mono text-[11px] uppercase tracking-[0.1em] text-fg-3">
+      <span>Recent writing</span>
+      <a href="/writing" class="text-fg-3 no-underline">archive →</a>
+    </div>
+  </div>
+
+  <div class="mt-0">
+    <PostList posts={listPosts} />
+  </div>
 </Layout>

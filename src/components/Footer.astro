@@ -1,0 +1,17 @@
+---
+import Uptime from './Uptime.svelte';
+
+const lastDeploy = '2026-04-22T09:14:00Z';
+---
+
+<footer
+  class="mx-auto mt-20 max-w-[var(--max-page)] flex flex-wrap justify-between gap-3.5 border-t border-border-1 px-6 pt-6 pb-10 font-mono text-xs text-fg-3"
+>
+  <span>$ whoami &nbsp;→&nbsp; alex platte · est. 2021</span>
+  <span class="flex items-center gap-4">
+    <Uptime client:load since={lastDeploy} />
+    <a href="https://github.com" class="text-fg-3 no-underline hover:text-fg-1">github</a>
+    <a href="/rss.xml" class="text-fg-3 no-underline hover:text-fg-1">rss</a>
+    <a href="https://github.com/platte" class="text-fg-3 no-underline hover:text-fg-1">view source</a>
+  </span>
+</footer>

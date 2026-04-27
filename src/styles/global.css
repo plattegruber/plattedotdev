@@ -1,0 +1,367 @@
+@import "tailwindcss";
+
+/* =========================================================================
+   Fonts
+   Inter Tight (sans), Instrument Serif (serif), JetBrains Mono (mono)
+   ========================================================================= */
+
+@font-face {
+  font-family: "Inter Tight";
+  src: url("/fonts/InterTight-Variable.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter Tight";
+  src: url("/fonts/InterTight-Variable-Italic.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Variable.woff2") format("woff2-variations");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =========================================================================
+   Theme tokens — exposed to Tailwind via @theme so they generate utilities
+   like font-sans / font-serif / font-mono / bg-bg-1 / text-fg-2 / text-accent
+   ========================================================================= */
+
+@theme {
+  --font-sans: "Inter Tight", ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-serif: "Instrument Serif", "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Stone — warm neutral scale */
+  --color-stone-50:  oklch(98.6% 0.004 80);
+  --color-stone-100: oklch(96.4% 0.006 80);
+  --color-stone-200: oklch(91.5% 0.008 80);
+  --color-stone-300: oklch(83.0% 0.010 80);
+  --color-stone-400: oklch(67.5% 0.012 80);
+  --color-stone-500: oklch(54.0% 0.012 80);
+  --color-stone-600: oklch(43.0% 0.012 80);
+  --color-stone-700: oklch(34.0% 0.010 80);
+  --color-stone-800: oklch(24.0% 0.008 80);
+  --color-stone-900: oklch(17.0% 0.006 80);
+  --color-stone-950: oklch(11.0% 0.005 80);
+
+  --color-amber-100: oklch(95.0% 0.040 75);
+  --color-amber-300: oklch(82.0% 0.130 75);
+  --color-amber-500: oklch(70.0% 0.170 60);
+  --color-amber-600: oklch(62.0% 0.170 50);
+  --color-amber-700: oklch(52.0% 0.140 45);
+
+  --color-rust-100: oklch(94.0% 0.030 30);
+  --color-rust-500: oklch(60.0% 0.180 30);
+  --color-rust-700: oklch(45.0% 0.150 30);
+
+  --color-moss-500: oklch(60.0% 0.110 145);
+  --color-moss-700: oklch(46.0% 0.090 145);
+
+  /* Semantic surface/text/border tokens (theme-mode-aware via :root + [data-theme=dark] below) */
+  --color-bg-1:        var(--bg-1);
+  --color-bg-2:        var(--bg-2);
+  --color-bg-3:        var(--bg-3);
+  --color-bg-code:     var(--bg-code);
+  --color-bg-mark:     var(--bg-mark);
+  --color-bg-overlay:  var(--bg-overlay);
+
+  --color-fg-1: var(--fg-1);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-fg-4: var(--fg-4);
+
+  --color-border-1: var(--border-1);
+  --color-border-2: var(--border-2);
+  --color-border-strong: var(--border-strong);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-bg: var(--accent-bg);
+
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --color-syntax-keyword: oklch(58% 0.16 30);
+  --color-syntax-string:  oklch(58% 0.13 145);
+  --color-syntax-number:  oklch(62% 0.15 60);
+  --color-syntax-comment: var(--syntax-comment);
+  --color-syntax-fn:      oklch(58% 0.13 250);
+
+  /* Spacing scale (additive to Tailwind defaults) */
+  --spacing: 4px;
+
+  /* Radii */
+  --radius-1: 3px;
+  --radius-2: 6px;
+  --radius-3: 10px;
+  --radius-4: 14px;
+
+  /* Type scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1.0625rem;
+  --text-md:   1.1875rem;
+  --text-lg:   1.5rem;
+  --text-xl:   2rem;
+  --text-2xl:  2.75rem;
+  --text-3xl:  4rem;
+  --text-4xl:  5.5rem;
+
+  /* Shadows */
+  --shadow-1: 0 1px 2px oklch(20% 0.01 80 / 0.04);
+  --shadow-2: 0 2px 8px -2px oklch(20% 0.01 80 / 0.08), 0 1px 2px oklch(20% 0.01 80 / 0.04);
+  --shadow-3: 0 12px 32px -8px oklch(20% 0.01 80 / 0.14), 0 2px 6px oklch(20% 0.01 80 / 0.06);
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:   cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* =========================================================================
+   Mode-aware semantic tokens (LIGHT default, DARK on data-theme="dark")
+   ========================================================================= */
+
+:root {
+  --bg-1:        var(--color-stone-50);
+  --bg-2:        oklch(99.5% 0.003 80);
+  --bg-3:        var(--color-stone-100);
+  --bg-code:     var(--color-stone-100);
+  --bg-mark:     var(--color-amber-100);
+  --bg-overlay:  oklch(11% 0.005 80 / 0.55);
+
+  --fg-1: var(--color-stone-900);
+  --fg-2: var(--color-stone-700);
+  --fg-3: var(--color-stone-500);
+  --fg-4: var(--color-stone-400);
+
+  --border-1: var(--color-stone-200);
+  --border-2: var(--color-stone-100);
+  --border-strong: var(--color-stone-300);
+
+  --accent:       var(--color-amber-700);
+  --accent-hover: var(--color-amber-600);
+  --accent-bg:    var(--color-amber-100);
+
+  --danger:  var(--color-rust-700);
+  --success: var(--color-moss-700);
+
+  --selection-bg: var(--color-amber-300);
+  --selection-fg: var(--color-stone-950);
+
+  --syntax-comment: oklch(62% 0.012 80);
+
+  --max-prose: 68ch;
+  --max-page: 720px;
+
+  --ring: 0 0 0 3px oklch(70% 0.17 60 / 0.30);
+}
+
+[data-theme="dark"] {
+  --bg-1:        var(--color-stone-950);
+  --bg-2:        oklch(13.0% 0.005 80);
+  --bg-3:        var(--color-stone-900);
+  --bg-code:     oklch(15.0% 0.005 80);
+  --bg-mark:     oklch(40% 0.10 60 / 0.40);
+  --bg-overlay:  oklch(5% 0.005 80 / 0.65);
+
+  --fg-1: var(--color-stone-100);
+  --fg-2: var(--color-stone-300);
+  --fg-3: var(--color-stone-400);
+  --fg-4: var(--color-stone-600);
+
+  --border-1: oklch(24% 0.006 80);
+  --border-2: oklch(20% 0.006 80);
+  --border-strong: oklch(32% 0.008 80);
+
+  --accent:       var(--color-amber-500);
+  --accent-hover: var(--color-amber-300);
+  --accent-bg:    oklch(35% 0.10 60 / 0.18);
+
+  --danger:  var(--color-rust-500);
+  --success: var(--color-moss-500);
+
+  --selection-bg: oklch(45% 0.13 60 / 0.55);
+  --selection-fg: var(--color-stone-50);
+
+  --syntax-comment: oklch(48% 0.012 80);
+
+  --ring: 0 0 0 3px oklch(70% 0.17 60 / 0.40);
+}
+
+/* =========================================================================
+   Base — element-level defaults so well-formed HTML "just works"
+   ========================================================================= */
+
+@layer base {
+  html, body { margin: 0; }
+  html {
+    font-family: var(--font-sans);
+    color: var(--color-fg-1);
+    background: var(--color-bg-1);
+  }
+  body {
+    font-size: var(--text-base);
+    line-height: 1.65;
+  }
+  ::selection { background: var(--selection-bg); color: var(--selection-fg); }
+  main { display: block; }
+
+  a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in oklch, var(--color-accent) 40%, transparent);
+    transition: text-decoration-color 120ms var(--ease-out-soft),
+                color 120ms var(--ease-out-soft);
+  }
+  a:hover { text-decoration-color: var(--color-accent); color: var(--color-accent-hover); }
+  a:visited { color: var(--color-accent); }
+  a:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 2px; }
+
+  strong, b { font-weight: 600; color: var(--color-fg-1); }
+  em, i { font-style: italic; }
+
+  mark {
+    background: var(--color-bg-mark);
+    color: inherit;
+    padding: 0 0.15em;
+    border-radius: 2px;
+  }
+
+  code, kbd, samp, pre { font-family: var(--font-mono); }
+  kbd {
+    font-size: 0.78em;
+    background: var(--color-bg-2);
+    border: 1px solid var(--color-border-strong);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-1);
+    padding: 0.1em 0.4em;
+    color: var(--color-fg-2);
+  }
+}
+
+/* =========================================================================
+   Prose — long-form reading column. The design's editorial spine.
+   ========================================================================= */
+
+.prose {
+  max-width: var(--max-prose);
+  font-size: var(--text-base);
+  line-height: 1.65;
+  color: var(--color-fg-1);
+}
+.prose, .prose * { color: inherit; }
+.prose > * + * { margin-top: 24px; }
+
+.prose h1 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--text-2xl);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--color-fg-1);
+}
+.prose h2 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-xl);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-fg-1);
+  margin-top: 48px;
+}
+.prose h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  color: var(--color-fg-1);
+  margin-top: 32px;
+}
+.prose h4 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: var(--text-md);
+  line-height: 1.2;
+  color: var(--color-fg-1);
+}
+
+.prose p { color: var(--color-fg-1); }
+.prose .lede {
+  font-size: var(--text-md);
+  color: var(--color-fg-2);
+  line-height: 1.55;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  background: var(--color-bg-code);
+  padding: 0.12em 0.38em;
+  border-radius: var(--radius-1);
+  border: 1px solid var(--color-border-2);
+  color: var(--color-fg-1);
+}
+.prose pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  background: var(--color-bg-code);
+  border: 1px solid var(--color-border-1);
+  border-radius: var(--radius-3);
+  padding: 24px;
+  overflow-x: auto;
+  color: var(--color-fg-1);
+}
+.prose pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+.prose blockquote {
+  border-left: 2px solid var(--color-border-strong);
+  padding-left: 24px;
+  font-style: italic;
+  color: var(--color-fg-2);
+  font-family: var(--font-serif);
+  font-size: var(--text-md);
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border-1);
+  margin: 48px 0;
+}
+
+.prose ul, .prose ol { padding-left: 1.4em; }
+.prose li + li { margin-top: 0.4em; }
+.prose li::marker { color: var(--color-fg-3); }
+
+/* =========================================================================
+   Wordmark cursor blink — used by the wordmark + terminal hero
+   ========================================================================= */
+
+@keyframes pdcur { 50% { opacity: 0; } }

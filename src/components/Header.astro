@@ -1,0 +1,43 @@
+---
+import Wordmark from './Wordmark.svelte';
+import ThemeToggle from './ThemeToggle.svelte';
+
+interface Props {
+  pathname: string;
+}
+
+const { pathname } = Astro.props;
+
+const tabs = [
+  { href: '/',        label: '~' },
+  { href: '/writing', label: 'writing' },
+  { href: '/now',     label: 'now' },
+  { href: '/about',   label: 'about' },
+];
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/' || pathname === '';
+  return pathname === href || pathname.startsWith(href + '/');
+}
+---
+
+<header
+  class="sticky top-0 z-10 flex items-center justify-between px-6 py-3.5 border-b border-border-1 backdrop-blur-md"
+  style="background: color-mix(in oklch, var(--color-bg-1) 86%, transparent);"
+>
+  <Wordmark size={16} />
+  <nav class="flex items-center gap-[22px]">
+    {tabs.map((t) => (
+      <a
+        href={t.href}
+        class:list={[
+          'font-mono font-medium text-[13px] no-underline transition-colors',
+          isActive(t.href) ? 'text-accent' : 'text-fg-2 hover:text-fg-1',
+        ]}
+      >
+        {t.label}
+      </a>
+    ))}
+    <ThemeToggle client:load />
+  </nav>
+</header>

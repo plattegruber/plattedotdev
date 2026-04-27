@@ -1,0 +1,32 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import GitGraph from '../../components/GitGraph.svelte';
+import { getAllPosts, formatIsoDate } from '../../lib/posts';
+
+const posts = await getAllPosts();
+const years = posts.map((p) => p.data.date.getUTCFullYear());
+const yearRange = `${Math.min(...years)} — ${Math.max(...years)}`;
+
+const graphPosts = posts.map((p) => ({
+  slug: p.id,
+  title: p.data.title,
+  date: formatIsoDate(p.data.date),
+}));
+---
+
+<Layout title="Archive — platte.dev">
+  <Breadcrumbs parts={[{ label: '~', href: '/' }, { label: 'writing' }]} />
+  <div class="mx-auto mt-[18px] max-w-[var(--max-page)] px-6">
+    <h1 class="my-[18px] mb-1.5 font-serif text-[48px] font-normal tracking-[-0.02em]">
+      Archive
+    </h1>
+    <p class="m-0 font-mono text-[13px] text-fg-3">
+      {posts.length} posts · {yearRange}
+    </p>
+  </div>
+
+  <div class="mt-9">
+    <GitGraph posts={graphPosts} initialDate="2021-08-14" />
+  </div>
+</Layout>

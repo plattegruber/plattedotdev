@@ -1,0 +1,23 @@
+---
+interface Part {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  parts: Part[];
+}
+
+const { parts } = Astro.props;
+---
+
+<div class="mx-auto max-w-[var(--max-page)] px-6 pt-[18px] font-mono text-xs text-fg-3">
+  {parts.map((p, i) => (
+    <>
+      {i > 0 && <span class="mx-[7px] text-fg-4">/</span>}
+      {p.href
+        ? <a href={p.href} class="text-fg-3 no-underline hover:text-fg-1">{p.label}</a>
+        : <span class="text-fg-2">{p.label}</span>}
+    </>
+  ))}
+</div>

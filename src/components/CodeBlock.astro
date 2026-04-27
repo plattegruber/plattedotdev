@@ -1,0 +1,43 @@
+---
+import { Code } from 'astro:components';
+import CopyButton from './CopyButton.svelte';
+
+interface Props {
+  name: string;
+  lang?: string;
+  code: string;
+}
+
+const { name, lang = 'ts', code } = Astro.props;
+---
+
+<div class="my-7 overflow-hidden rounded-[var(--radius-3)] border border-border-1 bg-bg-code">
+  <div class="flex items-center justify-between border-b border-border-1 bg-bg-2 px-3.5 py-2">
+    <span class="font-mono text-[11px] font-medium tracking-[0.02em] text-fg-3">
+      <span class="text-fg-4">›</span> {name}
+    </span>
+    <CopyButton client:visible text={code} />
+  </div>
+  <div class="codeblock-pre">
+    <Code code={code} lang={lang as any} themes={{ light: 'github-light', dark: 'github-dark-dimmed' }} />
+  </div>
+</div>
+
+<style is:global>
+  .codeblock-pre pre {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent !important;
+    padding: 18px 16px;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+  .codeblock-pre pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+  }
+</style>
