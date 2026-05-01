@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plattedotdev",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    { "pattern": "platte.dev", "custom_domain": true }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION",
+      "id": "563415e53b3e4819ae8731d25a182274"
+    }
+  ],
+  "observability": { "enabled": true }
+}

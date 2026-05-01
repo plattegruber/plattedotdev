@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://platte.dev',
   integrations: [svelte(), mdx()],
-  adapter: cloudflare(),
+  adapter: cloudflare({ configPath: './wrangler.jsonc' }),
   vite: {
     plugins: [tailwindcss()],
   },
