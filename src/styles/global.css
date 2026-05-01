@@ -49,6 +49,7 @@
 @theme {
   --font-sans: "Inter Tight", ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif;
   --font-serif: "Instrument Serif", "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --font-prose: "Iowan Old Style", Charter, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   /* Stone — warm neutral scale */
@@ -267,8 +268,9 @@
 
 .prose {
   max-width: var(--max-prose);
-  font-size: var(--text-base);
-  line-height: 1.65;
+  font-family: var(--font-prose);
+  font-size: 1.1875rem;
+  line-height: 1.72;
   color: var(--color-fg-1);
 }
 .prose, .prose * { color: inherit; }
@@ -309,7 +311,8 @@
 
 .prose p { color: var(--color-fg-1); }
 .prose .lede {
-  font-size: var(--text-md);
+  font-size: 1.15em;
+  font-style: italic;
   color: var(--color-fg-2);
   line-height: 1.55;
 }

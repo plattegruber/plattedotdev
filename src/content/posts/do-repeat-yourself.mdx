@@ -1,0 +1,242 @@
+---
+title: "Do Repeat Yourself"
+blurb: "Most of us learned a version of DRY that's missing the most important word in the original definition. Here's what changes when you put it back."
+date: 2026-04-28
+readMin: 8
+tag: "‡ essay"
+---
+
+import CodeBlock from '../../components/CodeBlock.astro';
+import Footnote from '../../components/Footnote.svelte';
+import FootnoteList from '../../components/FootnoteList.svelte';
+
+<p class="lede">
+  When you see two functions that look alike, your first instinct
+  should usually be to leave them alone. That's the short version
+  of this post. The long version is about why, and about how the
+  principle most of us think we're following actually says
+  something pretty different from what we've turned it into.
+</p>
+
+DRY — Don't Repeat Yourself — comes from Andy Hunt and Dave
+Thomas's *The Pragmatic Programmer*, published in 1999.<Footnote n={1} />
+The actual definition is this:
+
+> Every piece of **knowledge** must have a single, unambiguous,
+> authoritative representation within a system.
+
+The word doing the work in that sentence is *knowledge*, not
+*code*. The version of DRY most of us picked up somewhere along
+the way — in school, in a code review, from the senior engineer
+in our first job — is something more like "if the same three
+lines show up twice, extract a function." Hunt and Thomas have
+been pushing back on that reading for two decades. The shorthand
+isn't wrong, exactly, but it skips the question that actually
+matters: does the similarity represent shared knowledge, or do
+these two pieces of code just happen to look alike right now?
+
+## The wrong abstraction is worse than duplication
+
+In 2014, in a RailsConf talk called "All the Little Things,"
+Sandi Metz spent a small section on an idea that landed much
+harder than the rest of the talk. Two years later, she expanded
+it into a blog post titled "The Wrong Abstraction," which is
+probably the single most-cited piece on this subject.<Footnote n={2} />
+The line everyone takes from it:
+
+> Duplication is far cheaper than the wrong abstraction.
+
+The argument, which anyone who's maintained a long-lived
+codebase will recognize, runs like this. We see two functions
+that look 90% alike. We DRY them up into a shared helper. Six
+months later, a new requirement comes in for one of the callers,
+and under deadline pressure we take the path of least
+resistance: we add a parameter. The next requirement adds a
+flag. The one after that adds a conditional. Five years on, the
+"shared helper" is a 400-line function with twelve callers, a
+parameters object whose fields only apply to a third of them,
+and a comment at the top that says
+<code>{`// TODO: refactor this`}</code>. Nobody touches it.
+
+The duplication we removed cost us almost nothing. The
+abstraction we created costs us forever.
+
+The cost of an abstraction isn't the time it takes to write.
+It's the constraint it places on every future change to every
+caller. Abstractions are coupling. Coupling is debt. The bill
+comes due in years, not sprints.
+
+## Two things that look alike are not necessarily the same thing
+
+There's a question we should be asking and usually aren't: do
+these two pieces of code represent the same *idea*, or do they
+just happen to look alike right now?
+
+Two functions that exist in basically every B2B SaaS codebase.
+One sends a Slack alert to the ops team when a customer hits
+their plan limit. The other sends a Slack alert to the ops team
+when a customer's payment fails. On day one, both are some
+variation of: look up the right channel, format the customer's
+name and the message, post it. Identical bodies. A tempting
+target for DRY.
+
+But plan-limit alerts and payment-failure alerts are governed by
+different concerns, owned by different parts of the business,
+and will diverge accordingly. The plan-limit version will pick
+up usage data and an upgrade CTA, and will need batching so one
+noisy account doesn't flood the channel. The payment-failure
+version will pick up the failed amount, the dunning attempt
+count, an escalation path after N retries, and a route to
+#billing instead of #ops.
+
+When the divergence comes — and it will — the choice is between
+forking the helper (which makes the abstraction pointless) and
+jamming both behaviors into it (which makes the abstraction
+toxic).
+
+This is what Hunt and Thomas meant by *knowledge*. A plan-limit
+alert encodes how we communicate quota events. A payment-failure
+alert encodes how we communicate billing incidents. They live in
+different domains, will be tuned by different stakeholders, and
+will follow different rules over time. Two distinct pieces of
+knowledge that happened, on day one, to compute the same way.
+Not duplication.
+
+## The Rule of Three
+
+Martin Fowler attributes this one to Don Roberts, and it's the
+cleanest heuristic going: don't extract on the second occurrence.
+Wait for the third.<Footnote n={3} />
+
+Two data points is a line. Three is a shape. With two, there's
+no way to tell whether the similarity is meaningful or
+coincidental. With three, the pattern is usually obvious — and
+crucially, the abstraction can be designed against three real
+examples instead of guessed at from a sample of two.
+
+Cher Scarlett coined a related principle, AHA: Avoid Hasty
+Abstractions. Kent C. Dodds popularized it.<Footnote n={4} />
+Same intuition underneath — optimize for change, not for line
+count. The shape of the right abstraction usually isn't visible
+until the duplication has evolved a few times.
+
+The practical version is simple. On the second occurrence, the
+right move is usually to leave the duplication where it is.
+Maybe add a comment. Wait for the third instance before
+extracting anything.
+
+## Locality of behavior
+
+Carson Gross — the htmx guy — has written a lot about a
+counter-principle he calls **locality of behavior**: code we can
+understand by reading it in one place is more valuable than code
+that's been correctly normalized across six files.<Footnote n={5} />
+
+It sounds wrong if you've internalized DRY as a north star, but
+it lines up with how we actually read code in practice.
+Understanding what a component does means jumping through
+helpers and mixins and base classes, and that jumping is
+genuinely exhausting. A 50-line function that reads top-to-bottom
+is often easier to work with than five 10-line functions
+scattered across three files, even if the latter is "more DRY."
+
+It's also why a lot of experienced engineers have made peace
+with Tailwind and inline styles after years of being told to
+extract CSS. The locality wins more often than the deduplication
+does. You can argue with that aesthetically — and people do —
+but the maintainability data is real.
+
+## Beck's four rules, in order
+
+Kent Beck's rules of simple design come from *Extreme Programming
+Explained*, and Martin Fowler has the cleanest articulation of
+them.<Footnote n={6} /> The ordering is the whole point:
+
+1. Passes tests
+2. Reveals intention
+3. No duplication
+4. Fewest elements
+
+Duplication sits at number three. Behind intent. If removing
+duplication makes the code's intent harder to see, intent wins.
+Most of us have absorbed DRY as the dominant rule, which is a
+misreading of even the people who championed it.
+
+Intent comes first. Duplication only gets eliminated when doing
+so doesn't obscure what the code is trying to say.
+
+## DRY in the age of AI-generated code
+
+This is the part that doesn't get talked about enough.
+
+The economics of writing code have shifted. Generating a hundred
+lines is essentially free. Generating a thousand is essentially
+free. The bottleneck has moved — it's no longer typing speed,
+it's not even really design speed, it's *human review*. The
+scarce resource is the engineer reading the diff and deciding
+whether to trust it.
+
+That changes the calculus around DRY in a way that, to my eye,
+*strengthens* the principles in this post rather than weakening
+them.
+
+A 400-line shared helper with twelve callers and conditional
+flags is a nightmare to review even when a human wrote it. When
+an AI wrote it, the review has to verify not just that the
+abstraction is correct, but that the AI didn't introduce subtle
+behavioral drift in any of the twelve call sites. Good luck with
+that.
+
+Duplicated code is the opposite. It reads linearly. Each
+instance can be checked against the requirement in front of us
+without holding the rest of the system in our head. If the AI
+got a piece of duplicated logic wrong, the blast radius is
+local. If it got an abstraction wrong, the blast radius is
+everything that touches the abstraction.
+
+So the practical rule for AI-assisted development, in my
+opinion, is something like:
+
+- **Optimize for the reviewer, not the author.** The author had
+  infinite patience and zero context-switching cost. The
+  reviewer doesn't.
+- **Locality beats DRY almost every time** when humans are the
+  bottleneck. Code that reads top-to-bottom is auditable. Code
+  that bounces through abstraction layers is not.
+- **Wait longer to abstract, not less.** If two similar
+  functions are basically free to generate and basically free to
+  maintain, the cost of duplication has gone *down*, while the
+  cost of the wrong abstraction is unchanged. The Rule of Three
+  becomes the Rule of Four or Five.
+- **Push back on AI suggestions to extract.** Coding assistants
+  love to suggest refactoring duplication into shared functions,
+  because the duplication is locally visible and the future cost
+  of the abstraction is not. Their training data rewards short
+  code. Ours shouldn't.
+
+Looking back, DRY was a useful corrective in 1999, when
+copy-paste programming was rampant and IDEs barely had
+refactoring tools. It got flattened over the years into a rule
+about line-level duplication, and that flattening has produced
+a lot of fragile abstractions that are worse than what they
+replaced.
+
+The skill underneath all of this — the one that takes time to
+build — is recognizing whether two similar-looking pieces of
+code represent the same concept or just happen to rhyme right
+now. We usually can't tell on first sight. Which is why the
+safest move is to leave the duplication where it is until the
+answer becomes obvious.
+
+That advice was true in 1999. It's truer now.
+
+---
+
+<FootnoteList items={[
+  "Andy Hunt and Dave Thomas, *The Pragmatic Programmer* (Addison-Wesley, 1999). A 20th anniversary edition was published in 2019 and revisits the principle.",
+  "The talk was 'All the Little Things' at RailsConf 2014; the section that became famous was a small piece of a much larger talk. Metz expanded it into a blog post in 2016: sandimetz.com/blog/2016/1/20/the-wrong-abstraction.",
+  "Martin Fowler, *Refactoring: Improving the Design of Existing Code* (Addison-Wesley, 1999), chapter 2. Fowler credits Roberts directly.",
+  "Cher Scarlett's original post: dev.to/cher/avoiding-hasty-abstractions-aha-programming-3d3b. Kent C. Dodds's 'AHA Programming': kentcdodds.com/blog/aha-programming.",
+  "Carson Gross, 'Locality of Behaviour' — htmx.org/essays/locality-of-behaviour/. Gross traces the underlying intuition to a passage from Richard Gabriel on habitable code.",
+  "Martin Fowler, 'Beck Design Rules' — martinfowler.com/bliki/BeckDesignRules.html. Fowler distills Kent Beck's formulation from *Extreme Programming Explained: Embrace Change* (Addison-Wesley, 1999) and gives the cleanest version of the priority ordering."
+]} />
