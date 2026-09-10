@@ -13,6 +13,8 @@ const graphPosts = posts.map((p) => ({
   title: p.data.title,
   date: formatIsoDate(p.data.date),
 }));
+
+const initialDate = formatIsoDate(posts[posts.length - 1].data.date);
 ---
 
 <Layout title="Archive — platte.dev">
@@ -27,6 +29,6 @@ const graphPosts = posts.map((p) => ({
   </div>
 
   <div class="mt-9">
-    <GitGraph posts={graphPosts} initialDate="2021-08-14" />
+    <GitGraph posts={graphPosts} initialDate={initialDate} />
   </div>
 </Layout>

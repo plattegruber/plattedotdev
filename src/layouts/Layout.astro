@@ -10,7 +10,7 @@ interface Props {
 
 const {
   title,
-  description = "Alex Platte's notes on AI, code, and the diff between.",
+  description = "Platte's notes on engineering, AI, and adjacent things.",
 } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -23,6 +23,7 @@ const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="platte.dev" href="/rss.xml" />
     <title>{title}</title>
     <script is:inline>
       // Set theme before paint to avoid a flash of the wrong mode.
