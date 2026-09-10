@@ -2,7 +2,7 @@
 title: "tmux and Hooks"
 blurb: "Agent orchestrators got the problem right and the primitive wrong. You don't need a wrapper around your coding agent. You need tmux and a few hooks."
 date: 2026-09-09
-readMin: 5
+readMin: 4
 tag: "‡ essay"
 ---
 
@@ -10,94 +10,63 @@ import CodeBlock from '../../components/CodeBlock.astro';
 
 <p class="lede">
   At HubSpot, tools like Conductor are seeing more and more use.
-  These agent orchestrators have genuinely skyrocketed my own
-  productivity, and I still think they're built on the wrong
-  foundation. The problem they solve is real. The thing they
-  reach for to solve it is not.
+  These agent orchestrators have skyrocketed my own productivity,
+  but I think they're fundamentally built incorrectly.
 </p>
 
 These tools begin and live as harnesses around the coding agent.
-Conductor wraps Claude Code. The next one will wrap whatever
-comes after Claude Code. Either way, the deal is the same: give
-up your terminal, work one layer removed from the agent, and in
-exchange you get a screen with your agents lined up as tabs.
-
-I don't want that deal. I want to use the coding agent directly,
-and I want to use it in the terminal of my choice, which in my
-case is Ghostty. After a few weeks with an orchestrator, what it
-mostly feels like is indirection. Every feature I actually use is
-a thin veneer over a thing I could already do, and every feature
-I don't use is in the way.
+I don't want that. I want to use the coding agent directly, and
+I want to use it in the terminal of my choice (Ghostty, in my
+case). Honestly, these tools end up feeling like a layer of
+indirection rather than a useful thing.
 
 ## They got the primitive wrong
 
-To be clear, the diagnosis is correct. "Help people organize
-their agents" is a real problem, and it's getting bigger every
-month as the number of agents a single engineer runs at once
-climbs from one to three to eight.
+They got the problem right. "Help folks organize their agents"
+is a real problem, and it gets bigger every month as the number
+of agents you're running at once goes from one to three to
+eight. But they reached for a wrapper as the solution.
 
-The mistake is in the solution. They reached for a *wrapper*
-when the thing they needed was a *substrate*. A wrapper says:
-come live inside my app, and I'll manage the agent for you. A
-substrate says: keep doing what you're doing, and I'll make sure
-it persists, can be found again, and can be built on.
+In order to have my agents appear as tabs on a screen, they're
+asking me to forgo my terminal, work a layer removed from Claude
+Code, and trust a brand new codebase to be the thing that holds
+all my in-flight sessions together. That's a big ask.
 
-In order to show my agents as tabs on a screen, a wrapper asks
-me to forgo my terminal, forgo direct access to Claude Code, and
-trust a young codebase to be the thing that holds my working
-sessions together. That's a big ask, and the tab UI isn't
-anywhere near worth it.
-
-I have a better idea. It's two things, and neither one is new.
+I have a better idea. tmux + hooks. Don't worry about a UI yet.
+It's actually the less interesting half.
 
 ## tmux
 
-Every instance of Claude Code lives in a tmux session, and the
-tool manages the session rather than the agent. It can remember
-session ids, attach metadata, keep a registry, whatever it needs
-in order to keep track of what's running where. That's the whole
-job.
+Every instance of Claude Code lives in a tmux session, managed
+by the tool. The tool can remember ids, metadata, whatever it
+needs to manage the tmux session. That's its whole job.
 
-Because the agent just lives in tmux, everything else falls out
-for free:
+But, importantly, because the agent just lives in tmux, you can
+open, close, and recall the session in whatever terminal you
+want and away you go. You're right where you left off.
 
-- **Any terminal.** Open the session in Ghostty, in iTerm, in
-  the VS Code terminal, in whatever. Close it. Reopen it
-  somewhere else. You're right where you left off.
-- **Any device.** Want to check on an agent from your phone?
-  It's a tmux session. SSH in and attach.
-- **Any crash.** Computer restarted? The session is still there.
-  Attach and resume.
-- **Any layout.** Split panes, windows, multiple agents on one
-  screen or one per screen. tmux already does this and does it
-  better than anything a wrapper will ship in its first year.
+Want to connect from your phone? It's just a tmux session. SSH
+in. Did your computer restart? Just resume the session. Want
+split panes, or eight agents across two windows? tmux already
+does that.
 
-tmux is battle-tested. It has been the thing people trust their
-long-running terminal work to for going on two decades. The
-vibe-coded harness that showed up last quarter is not that, and
-it's not going to become that by adding features. Just use tmux.
+tmux is battle tested. Your vibe coded solution isn't. Just use
+tmux.
 
 ## Hooks
 
-The second half is the half that actually makes this a system
-instead of a launcher. Claude Code fires hooks at well-defined
-points in a session, and each hook is just a command that
-receives a JSON payload on stdin. That's enough to wire an agent
-into anything.
+And hooks! Claude Code fires hooks at well-defined points in a
+session, and each hook is just a command that gets a JSON
+payload on stdin. That's enough to wire an agent into anything.
 
-A few examples of what falls out of that:
+`Stop` hooks can kick off a cheap summarizer that keeps titles
+and summaries up to date for every running session. That's the
+"tabs with names" feature, for about fifteen lines of script.
+`SessionEnd` hooks can update a todo list. `Notification` hooks
+can ping you wherever you actually are when an agent needs
+input. Whatever. Hooks can massively power your workflow.
 
-- A **`Stop`** hook fires every time the agent finishes a turn.
-  Point it at a cheap summarizer and you get a title and a
-  one-line summary for every running session, kept current
-  without anyone asking for it. That's the "tabs with names"
-  feature, and it costs about fifteen lines.
-- A **`SessionEnd`** hook can update a todo list, close out a
-  ticket, or drop a note in a log of what happened today.
-- A **`Notification`** hook can ping you wherever you actually
-  are when an agent needs input, instead of making you go look.
-
-The configuration is small enough to fit in your head:
+The config is small:
 
 <CodeBlock name=".claude/settings.json" lang="json" code={`{
   "hooks": {
@@ -118,33 +87,23 @@ The configuration is small enough to fit in your head:
   }
 }`} />
 
-Each of those scripts reads the session id and transcript path
-off stdin and does whatever you want with them. Write to a
-SQLite file. Post to Slack. Update a status bar. Hooks can
-massively power your workflow, and they compose with the tmux
-half naturally, because the session id from the hook payload is
-the same one you're using to name the tmux session.
+Each script reads the session id and transcript path off stdin
+and does whatever you want with them. Write to SQLite. Post to
+Slack. Update a status bar. And the session id in that payload
+is the same one you named the tmux session with, so the two
+halves line up for free.
 
 ## Notice how unopinionated this is
 
-I'm not pitching a specific tool you have to learn, or one that
-asks you to compromise on how you already work. I'm pitching the
-correct primitives, and the correct primitives let you build
-your own tool.
+I'm not pitching a specific tool that you have to learn or that
+asks you to compromise. I'm pitching the correct primitives,
+which let you build your own tool.
 
-Want a UI? Build one on top. A TUI that lists sessions from the
-registry and attaches on Enter is an afternoon. A web dashboard
-that reads the summaries the `Stop` hook writes is not much more.
-Want notifications? Hook. Want it to talk to Linear or Jira or
-your team's deploy tool? Hook. Want none of that and just a
-script that says "start an agent in this repo"? Fine, that's
-about six lines of tmux.
+Build whatever UI you want on top of them. Add notifications if
+you want. Have it talk to your other tools via hooks. Or skip
+all of that and write a six-line script that starts an agent in
+the current repo.
 
-The UI is the less interesting half, and it's the half every
-orchestrator leads with. Get the substrate right and the UI
-becomes a personal preference rather than a platform decision.
-
-Here's the actual pitch, then. Spin up a Claude Code session,
-tell it you want an agent orchestration setup built on tmux and
-hooks, and tell it which features you want. It'll have a working
-version before your orchestrator finishes updating.
+Spin up a Claude Code session, tell it you want to build an
+agent orchestration IDE with tmux + hooks, and tell it what
+features you want.
