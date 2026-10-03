@@ -2,7 +2,7 @@
 title: "Building in Public"
 blurb: "I build a lot of things. My wife says I never share any of them, and she's right."
 date: 2026-10-03
-readMin: 2
+readMin: 3
 tag: "‡ essay"
 ---
 
@@ -41,3 +41,19 @@ At the same time, I actually do get messages from folks wanting to sign up. So t
 The same thing as Skip Static but for dentists. This one is even \_more\_ involved however. I want to provide managed Google Business Page support, coordinate actual photographers for great website pictures, and (someday, if demand asks for it) provide both hipaa-compliant forms and integrations with dental softwares. That's why it costs more. Plus, I think it'd be valuable to put human eyes on these websites with some regularity.
 
 No signups here yet, but it is live at root.site.
+
+## Dental website analyzer
+
+My first ChatGPT plugin. I'm trying to make a genuinely useful plugin for analyzing dental websites. There's a lot that goes into a good one - you have to serve customers on their phones looking for a quick phone number, potential customers who have anxiety and want to look for the friendliest option, and people who want to make sure their insurance is accepted. At the same time, there exists \_another\_ set of customers; the dentist, for whom the website is a form of personal branding, and the web designer, who needs to know the technical details that lead to success.
+
+I'm mostly finding it hard to balance the generated report.  How do I present highly technical information in a way that doesn't intimidate the dentist? How do I say "use good images" in a way that doesn't make a web dev roll their eye? I haven't figured this out yet.
+
+This isn't live yet but it's getting close.
+
+## ProofQL
+
+My latest endeavor. Many businesses put Google reviews on their website as a form of social proof that they're worth trusting. I think I can do one better.
+
+My idea is to put \_relevant\_ Google reviews on web pages. So for a general contractor, they may have a page dedicated to roofing; my API will filter Google reviews so that the web dev can show just roofing-related reviews.
+
+My goal here is to do this so cheaply that I can provide an insanely generous free tier. We'll see.
